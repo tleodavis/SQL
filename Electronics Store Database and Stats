@@ -1,0 +1,26 @@
+CREATE TABLE electronics_store (id INTEGER PRIMARY KEY, item TEXT, price INTEGER, brand TEXT, release_year INTEGER);
+INSERT INTO electronics_store VALUES (1, "Nintendo Switch", 299.99, "Nintendo", 2017);
+INSERT INTO electronics_store VALUES (2, "Nintendo Switch OLED", 349.99, "Nintendo", 2021);
+INSERT INTO electronics_store VALUES (3, "PlayStation5 Console", 499.99, "Sony", 2020);
+INSERT INTO electronics_store VALUES (4, "PlayStation5 Digital Edition Console", 399.99, "Sony", 2020);
+INSERT INTO electronics_store VALUES (5, "Nintendo Switch Lite", 199.99, "Nintendo", 2019);
+INSERT INTO electronics_store VALUES (6, "Xbox Series X", 499.99, "Microsoft", 2020);
+INSERT INTO electronics_store VALUES (7, "Xbox Series S", 299.99, "Microsoft", 2020);
+INSERT INTO electronics_store VALUES (8, "AirPods (2nd Generation)", 129, "Apple", 2019);
+INSERT INTO electronics_store VALUES (9, "AirPods Max", 549, "Apple", 2020);
+INSERT INTO electronics_store VALUES (10, "AirPods Pro (2nd Generation)", 249, "Apple", 2022);
+INSERT INTO electronics_store VALUES (11, "Meta Quest 2", 399.99, "Meta", 2020);
+INSERT INTO electronics_store VALUES (12, "Meta Quest Pro", 999.99, "Meta", 2022);
+INSERT INTO electronics_store VALUES (13, "DualSense Edge Wireless Controller", 199.99, "Sony", 2023);
+INSERT INTO electronics_store VALUES (14, "Xbox Wireless Controller", 54.99, "Microsoft", 2020);
+INSERT INTO electronics_store VALUES (15, "Pro Controller", 69.99, "Nintendo", 2017);
+
+SELECT * FROM electronics_store
+ORDER BY price;
+
+SELECT item, release_year FROM electronics_store
+WHERE release_year > 2019
+ORDER BY release_year;
+
+SELECT AVG(price) FROM electronics_store
+WHERE brand = "Nintendo"
