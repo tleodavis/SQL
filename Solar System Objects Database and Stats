@@ -50,22 +50,25 @@ INSERT INTO solar_system_objects(body,mean_radius,mean_radius_rel,volume,volume_
 INSERT INTO solar_system_objects(body,mean_radius,mean_radius_rel,volume,volume_rel,mass,mass_rel,density,surface_gravity,surface_gravity_rel,type_of_object,shape) VALUES ('Tethys ',531.1,0.083,0.624,0.0006,0.6173,0.000103,0.984,0.145,0.015,'satellite of Saturn','round');
 INSERT INTO solar_system_objects(body,mean_radius,mean_radius_rel,volume,volume_rel,mass,mass_rel,density,surface_gravity,surface_gravity_rel,type_of_object,shape) VALUES ('Ceres ',476.2,0.076,0.437,0.0004,0.95,0.000159,2.077,0.27,0.0275,'dwarf planet belt asteroid','round');
 
-
+/* Display satellites of planets in the Solar System along with which planet they are a satellite of and their mass. Order by planet they belong to. */
 SELECT body, type_of_object, mass FROM solar_system_objects
     WHERE type_of_object LIKE "%satellite%"
     AND type_of_object NOT LIKE "satellite_of_Pluto"
     ORDER BY type_of_object;
 
+/* Display the average mass of the various planets' satellite(s) grouped by the planet they belong to. */
 SELECT type_of_object, COUNT(*), AVG(mass) AS avg_mass FROM solar_system_objects
     WHERE type_of_object LIKE "satellite%"
     AND type_of_object NOT LIKE "satellite_of_Pluto"
     GROUP BY type_of_object;
 
+/* What is the most massive satellite of each planet that has one? */
 SELECT body, type_of_object, MAX(mass) AS max_satellite_mass_per_planet FROM solar_system_objects
     WHERE type_of_object LIKE "satellite%"
     AND type_of_object NOT LIKE "satellite_of_Pluto"
     GROUP BY type_of_object;
 
+/* How many of the planets' satellites are larger than the Moon and how many are smaller? */
 SELECT COUNT(mass),
     CASE
     WHEN mass > 73.5 THEN "more massive than Moon"
