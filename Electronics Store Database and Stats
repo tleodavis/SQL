@@ -1,3 +1,5 @@
+/* Create an electronics store database. */
+
 CREATE TABLE electronics_store (id INTEGER PRIMARY KEY, item TEXT, price INTEGER, brand TEXT, release_year INTEGER);
 INSERT INTO electronics_store VALUES (1, "Nintendo Switch", 299.99, "Nintendo", 2017);
 INSERT INTO electronics_store VALUES (2, "Nintendo Switch OLED", 349.99, "Nintendo", 2021);
@@ -15,12 +17,16 @@ INSERT INTO electronics_store VALUES (13, "DualSense Edge Wireless Controller", 
 INSERT INTO electronics_store VALUES (14, "Xbox Wireless Controller", 54.99, "Microsoft", 2020);
 INSERT INTO electronics_store VALUES (15, "Pro Controller", 69.99, "Nintendo", 2017);
 
+/* Display the database ordered by price. */
 SELECT * FROM electronics_store
 ORDER BY price;
 
+/* Display all items and their release year that were released after 2019 ordered by release year. */
 SELECT item, release_year FROM electronics_store
 WHERE release_year > 2019
 ORDER BY release_year;
 
+/* What is the average price of Nintendo Switch models? */
 SELECT AVG(price) FROM electronics_store
 WHERE brand = "Nintendo"
+AND item LIKE "Nintendo Switch%";
