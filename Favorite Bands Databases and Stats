@@ -1,0 +1,52 @@
+/* Create a table of some of my favorite bands. */
+
+CREATE TABLE bands (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    year_founded INTEGER);
+
+INSERT INTO bands (name, year_founded) VALUES ("twenty one pilots", 2009);
+INSERT INTO bands (name, year_founded) VALUES ("Paramore", 2004);
+
+/* Create a table of some of those bands' songs. */
+
+CREATE TABLE songs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    artist_id TEXT,
+    album TEXT,
+    year_released INTEGER);
+
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Rose-Colored Boy", 2, "After Laughter", 2017);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Last Hope", 2, "Paramore", 2013);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Playing God", 2, "Brand New Eyes", 2009);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("When It Rains", 2, "Riot!", 2007);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Johnny Boy", 1, "twenty one pilots", 2009);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Lovely", 1, "Regional at Best", 2011);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Not Today", 1, "Blurryface", 2015);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Nico and the Niners", 1, "Trench", 2018);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Redecorate", 1, "Scaled and Icy", 2021);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Conspiracy", 2, "All We Know Is Falling", 2005);
+INSERT INTO songs (title, artist_id, album, year_released) VALUES ("The Run and Go", 1, "Vessel", 2013);
+
+/* Create a table of members of those bands. */
+
+CREATE TABLE band_members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    band_id INTEGER,
+    role TEXT);
+
+INSERT INTO band_members (name, band_id, role) VALUES ("Tyler Joseph", 1, "lead vocalist");
+INSERT INTO band_members (name, band_id, role) VALUES ("Josh Dun", 1, "drummer");
+INSERT INTO band_members (name, band_id, role) VALUES ("Hayley Williams", 2, "lead vocalist");
+INSERT INTO band_members (name, band_id, role) VALUES ("Taylor York", 2, "guitarist");
+INSERT INTO band_members (name, band_id, role) VALUES ("Zac Farro", 2, "drummer");
+
+
+/* Display the band's name as well as all members of twenty one pilots and their roles in the band. */
+
+SELECT bands.name AS band, band_members.name AS band_member, band_members.role FROM bands
+    JOIN band_members
+    ON band_members.band_id = bands.id
+    WHERE band = "twenty one pilots";
