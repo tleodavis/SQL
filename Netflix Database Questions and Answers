@@ -1,4 +1,4 @@
---In this SQL code, I am querying multiple databases containing information about Netflix titles to answer questions pertaining to the data.
+--In this SQL code, I am querying a database that contains information about Netflix titles in order to answer questions pertaining to the information.
 
 
 --1. How many movie titles are there in the database? (movies only, not tv shows)
