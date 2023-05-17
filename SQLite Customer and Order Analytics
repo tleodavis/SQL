@@ -23,12 +23,6 @@ WHERE length(orderID) = 6
     AND orderID <> 'Order ID'
 
 --4. Which product was the cheapest one sold in January, and what was the price?
-SELECT distinct Product, min(price)
-FROM BIT_DB.JanSales
-GROUP BY Product, price
-ORDER BY price ASC
-LIMIT 1
-
 SELECT distinct Product, price
 FROM BIT_DB.JanSales
 WHERE price IN
