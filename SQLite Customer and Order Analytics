@@ -29,6 +29,12 @@ GROUP BY Product, price
 ORDER BY price ASC
 LIMIT 1
 
+SELECT distinct Product, price
+FROM BIT_DB.JanSales
+WHERE price IN
+    (SELECT min(price)
+    FROM BIT_DB.JanSales)
+
 --5. What is the total revenue for each product sold in January? (Revenue can be calculated using the number of products sold and the price of the products).
 SELECT Product, sum(Quantity) * price as revenue
 FROM BIT_DB.JanSales
