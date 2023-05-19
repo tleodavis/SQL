@@ -16,9 +16,9 @@ WHERE length(orderID) = 6
 
 --3. Select the customer account numbers for all the orders that were placed in February.
 SELECT DISTINCT acctnum
-FROM BIT_DB.customers customers
-JOIN BIT_DB.FebSales febsales
-    ON customers.order_id = febsales.orderID
+FROM BIT_DB.customers cust
+JOIN BIT_DB.FebSales feb
+    ON cust.order_id = feb.orderID
 WHERE length(orderID) = 6
     AND orderID <> 'Order ID'
 
@@ -42,9 +42,9 @@ GROUP BY Product
 
 --7. How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
 SELECT count(distinct customers.acctnum), avg(Quantity * price) as avg_amount_spent
-FROM BIT_DB.FebSales febsales
-LEFT JOIN BIT_DB.customers customers
-    ON febsales.orderID = customers.order_id
+FROM BIT_DB.FebSales feb
+LEFT JOIN BIT_DB.customers cust
+    ON feb.orderID = cust.order_id
 WHERE Quantity > 2
     AND length(orderid) = 6
     AND orderid <> 'Order ID'
