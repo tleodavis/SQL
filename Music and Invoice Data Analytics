@@ -1,0 +1,42 @@
+--1. Display a list of all customers living outside the US along with
+--   their customer ID, full name, country, and email.
+SELECT CustomerId, FirstName, LastName, Country, Email
+FROM customers
+WHERE Country <> 'USA'
+
+--2. Display the ID number and full name of all Sales Support Agents
+--   and the invoices associated with them (with invoice ID, customer
+--   ID and invoice date).
+SELECT empl.EmployeeId, empl.FirstName, empl.LastName,
+       inv.InvoiceId, inv.CustomerId, inv.InvoiceDate
+FROM employees empl
+LEFT JOIN customers cust
+    ON empl.EmployeeId = cust.SupportRepId
+JOIN invoices inv
+    ON cust.CustomerId = inv.CustomerId
+WHERE empl.Title = 'Sales Support Agent'
+
+--3. What was the total revenue by country in 2012?
+SELECT sum(Total), BillingCountry
+FROM invoices
+GROUP BY BillingCountry
+
+--4. How many tracks are there in each genre?
+SELECT t.GenreId, g.Name, count(*)
+FROM tracks t
+JOIN genres g
+    ON t.GenreId = g.GenreId
+GROUP BY t.GenreId
+
+--5. Which tracks were purchased the most?
+SELECT t.Name, sum(Quantity)
+FROM invoice_items ii
+JOIN tracks t
+    ON ii.TrackId = t.TrackId
+GROUP BY ii.TrackId
+HAVING sum(Quantity) =
+    (SELECT sum(Quantity)
+    FROM invoice_items
+    GROUP BY TrackId
+    ORDER BY sum(Quantity) DESC
+    LIMIT 1)
