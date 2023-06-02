@@ -26,7 +26,7 @@ time_signature integer NOT NULL)
 --I then inserted the Spotify data (.csv) into the table.
 --Lastly, I explored the data using the following SQL.
 
---I determined the average danceability of the ten most popular songs.
+--I determined the average danceability of the top ten most popular songs.
 SELECT avg(danceability)
 FROM BIT_DB.Spotifydata
 WHERE popularity IN (
@@ -35,14 +35,13 @@ WHERE popularity IN (
     ORDER BY popularity desc
     LIMIT 10)
 
---I found the average danceability of each artist.
+--I found each artist's average danceability.
 SELECT artist_name, avg(danceability)
 FROM BIT_DB.Spotifydata
 GROUP BY artist_name
 ORDER BY avg(danceability) desc
 
---I displayed the names of all the collaborative songs in the data
---and which artists released them.
+--I displayed the names of all the collaborative songs in the data and which artists released them.
 SELECT track_name, artist_name
 FROM BIT_DB.Spotifydata
 WHERE track_name like '%(with%'
