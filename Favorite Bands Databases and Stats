@@ -29,7 +29,7 @@ INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Redecorate",
 INSERT INTO songs (title, artist_id, album, year_released) VALUES ("Conspiracy", 2, "All We Know Is Falling", 2005);
 INSERT INTO songs (title, artist_id, album, year_released) VALUES ("The Run and Go", 1, "Vessel", 2013);
 
-/* Third, I created a table for members of those bands. */
+/* Third, I created a table for members of the bands. */
 
 CREATE TABLE band_members (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,7 +44,7 @@ INSERT INTO band_members (name, band_id, role) VALUES ("Taylor York", 2, "guitar
 INSERT INTO band_members (name, band_id, role) VALUES ("Zac Farro", 2, "drummer");
 
 
-/* Finally, I used the following SQL to display the band name of twenty one pilots as well as its members and their roles in the band. */
+/* Lastly, I used the following SQL to display the band name of twenty one pilots as well as its members and their roles in the band. */
 
 SELECT bands.name AS band, band_members.name AS band_member, band_members.role FROM bands
     JOIN band_members
