@@ -21,7 +21,7 @@ INSERT INTO electronics_store VALUES (15, "Pro Controller", 69.99, "Nintendo", 2
 SELECT * FROM electronics_store
 ORDER BY price;
 
-/* Display all items and their release year that were released after 2019 ordered by release year. */
+/* Display all items released after 2019 and the year they came out ordered by release year. */
 SELECT item, release_year FROM electronics_store
 WHERE release_year > 2019
 ORDER BY release_year;
