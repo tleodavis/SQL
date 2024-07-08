@@ -1,0 +1,141 @@
+--Define a CTE that contains all SYNSYS-trial-unit RMAs. This will be used later to retrieve specific sets of data from the overall expression.
+
+WITH [CTE] AS
+(
+SELECT [Returns].[SOPNUMBE], [CONTSERIALNBR], [RETDOCID], [ENTDTE], [RETUDATE], [Completed_Returns].[ITEMNMBR], [STSDESCR], [CONTNBR]
+FROM
+    (
+    SELECT [Lines].[SOPNUMBE], [CONTNBR], [RETUDATE], [ITEMNMBR], [CONTSERIALNBR]
+    FROM [ASIEXP06]
+    INNER JOIN
+        (
+        SELECT [ITEMNMBR], [SOPNUMBE], [CONTNBR], [CONTSERIALNBR]
+        FROM [ASIEXP20]
+        WHERE [ITEMNMBR] = '1P700LEG-DEMO'
+        )
+        AS [Lines]
+    ON [ASIEXP06].[SOPNUMBE] = [Lines].[SOPNUMBE]
+    WHERE [ASIEXP06].[SOPNUMBE] LIKE 'CRM%' AND [ASIEXP06].[SOPNUMBE] IS NOT NULL
+    )
+    AS [Completed_Returns]
+LEFT JOIN
+    (
+    SELECT [SVC5000V].[SOPNUMBE], [RETDOCID], [SERLTNUM], [ENTDTE], [ITEMNMBR]
+        , [SVC05500].[STSDESCR]
+    FROM [SVC5000V]
+    INNER JOIN [SOP10201]
+    ON [SVC5000V].[SOPNUMBE] = [SOP10201].[SOPNUMBE]
+    INNER JOIN [SVC05500]
+    ON [SVC5000V].[RETSTAT] = [SVC05500].[RETSTAT]
+    WHERE [SVC5000V].[SOPNUMBE] LIKE 'STRINV%'
+        OR [SVC5000V].[SOPNUMBE] LIKE 'DMOINV%'
+    )
+    AS [Returns]
+ON [Completed_Returns].[CONTSERIALNBR] = [Returns].[SERLTNUM]
+)
+
+
+SELECT
+    [SERLTNUM] AS [Inv_Number], [ORIGNUMB] AS [Order_Number], [STSDESCR] AS [Return_Status], CONVERT(DATE, [DOCDATE], 101) AS [Document_Date],
+    CONVERT(DATE, [ACTLSHIP], 101) AS [Actual_Ship_Date], CONVERT(DATE, [RETUDATE], 101) AS [Return Date], NULLIF(CONCAT('RMA00000',right(trim([CONTNBR]),7)),
+    'RMA00000') AS [RMA_ID], [Return_SOP_Number] AS [CRM_Number], NULLIF(TRY_CAST(TRIM([SERLTNUM]) AS INT),0) AS [Serial_Number],
+    [CSTPONBR] AS [Customer_PO_Number], [CUSTNMBR] AS [Customer_Number], [CUSTNAME] AS [Customer_Name], [ADDRESS1], [ADDRESS2] [CITY], [STATE], [ZIPCODE], [COUNTRY]
+FROM
+
+    (
+
+--Select SYNSYS trial units that have been sold.
+
+    SELECT
+        [Sales].[SOPNUMBE] AS [Sales_SOP_Number], [Sales_Serial].[ITEMNMBR], [SERLTNUM], [CUSTNAME], [ORIGNUMB], [ACTLSHIP], [CSTPONBR], [ADDRESS1], [ADDRESS2], [CITY], [STATE], [ZIPCODE], [COUNTRY], [DOCDATE], [CUSTNMBR]
+        , [STSDESCR], [SYNSYS_Returns].[RETUDATE], [SYNSYS_Returns].[SOPNUMBE] AS [Return_SOP_Number], [CONTNBR]
+    FROM [ASIEXP06] AS [Sales]
+    INNER JOIN
+        (
+        SELECT [SERLTNUM], [SOPNUMBE], [ITEMNMBR]
+        FROM [SOP10201]
+        )
+        AS [Sales_Serial]
+    ON [Sales].[SOPNUMBE] = [Sales_Serial].[SOPNUMBE]
+        AND [Sales_Serial].[ITEMNMBR] LIKE '1P700LEG-DEMO'
+    LEFT JOIN
+
+        (
+
+--Select closed RMAs of SYNSYS trial units.
+
+        SELECT [SOPNUMBE], [CONTSERIALNBR], [RETDOCID], [ENTDTE], [RETUDATE], [ITEMNMBR], [STSDESCR], [CONTNBR]
+        FROM [CTE]
+        WHERE CONCAT('RMA00000',right(trim([CONTNBR]),7)) = [RETDOCID]
+
+--Add SYNSYS-trial-unit RMAs that are being processed to the list of closed RMAs.
+
+        UNION
+
+        SELECT [SOPNUMBE], [CONTSERIALNBR], [RETDOCID], [ENTDTE], NULL AS [RETUDATE], [ITEMNMBR], [STSDESCR], NULL AS [CONTNBR]
+        FROM [CTE]
+        WHERE [STSDESCR] <> 'Closed RMA'
+        )
+        AS [SYNSYS_Returns]
+
+    ON [SYNSYS_Returns].[SOPNUMBE] = [Sales_Serial].[SOPNUMBE]
+    )
+    AS [SYNSYS_Sales_and_Returns]
+ORDER BY [CONTNBR], [Return_SOP_Number]
+
+
+
+
+
+
+
+/*
+ORIGINAL CODE I RECEIVED FROM THE PERSON INITIALLY ASSIGNED TO WRITE THIS QUERY THAT I THEN ADDED AND MADE EDITS TO:
+
+SELECT [SOP_SALES].[SOPNUMBE] as inv_number, [ORIGNUMB] as order_number, [return_status], convert(date,[DOCDATE],101) DOCDATE,
+    convert(date,[ACTLSHIP],101) ACTLSHIP, convert(date,[returns].[RETUDATE], 101) as 'Return Date', NULLIF(CONCAT('RMA00000',right(trim([CONTNBR]),7)),
+    'RMA00000') as RETDOCID, [returns].[SOPNUMBE] as crm_number, NULLIF(TRY_CAST(TRIM([SERLTNUM]) AS INT),0) as 'Serial Number',
+    [CSTPONBR], [CUSTNMBR], [CUSTNAME], [ADDRESS1], [ADDRESS2], [CITY], [STATE], [ZIPCODE], [COUNTRY]
+FROM (
+       
+ 
+SELECT [SALE].[SOPNUMBE], [DOCDATE], [SERLTNUM], [ORIGNUMB], [CUSTNMBR], [CUSTNAME], [ACTLSHIP], [CSTPONBR], [ADDRESS1], [ADDRESS2], [CITY], [STATE], [ZIPCODE], [COUNTRY]
+    FROM [fillc].[dbo].[asiexp06] as SALE
+        INNER JOIN
+        (SELECT SERLTNUM, SOPNUMBE
+        from [fillc].[dbo].[sop10201]
+        where [itemnmbr] like '1p700%%' AND [SOPNUMBE] like 'STRINV%%')
+        as [sales] ON [sales].[SOPNUMBE] = [SALE].[SOPNUMBE]) SOP_SALES
+ 
+ 
+    LEFT JOIN
+ 
+    (SELECT TOP(9999999)
+        *
+    FROM
+        (            SELECT [lines].[SOPNUMBE], [CONTNBR], NULL AS [RMA_Entry_Date], [RETUDATE], [ITEMNMBR], [CONTSERIALNBR], 40 AS [return_status]
+            FROM [FILLC].[dbo].[ASIEXP06]
+ 
+                INNER JOIN
+                (SELECT [ITEMNMBR], [SOPNUMBE], [CONTNBR], [CONTSERIALNBR]
+                FROM [FILLC].[dbo].[ASIEXP20]
+                WHERE [ITEMNMBR] = '1P700LEG-DEMO') AS [lines]
+                ON [ASIEXP06].[SOPNUMBE] = [lines].[SOPNUMBE]
+ 
+            WHERE [FILLC].[dbo].[ASIEXP06].[SOPNUMBE] like 'CRM%' AND [FILLC].[dbo].[ASIEXP06].[SOPNUMBE] is not null
+ 
+ 
+        UNION
+            select [svc5000v].[sopnumbe], [retdocid], [entdte] as [RMA_Entry_Date], NULL AS [RETUDATE], [ITEMNMBR], [serltnum], [retstat] as [return_status]
+            from [svc5000v]
+                inner join [sop10201] on [svc5000v].[sopnumbe] = [sop10201].[sopnumbe]
+            where [svc5000v].[sopnumbe] like 'STRINV%'
+            ) returns_partial
+    ORDER BY [RETUDATE])
+ 
+ 
+        AS returns
+    ON [SERLTNUM] = [CONTSERIALNBR] AND DATEDIFF(day, [SOP_SALES].[DOCDATE], [returns].[RETUDATE])>0
+WHERE DATEDIFF([DAY], [RETUDATE], GETDATE())<90 OR [RETUDATE] IS NULL
+ORDER BY [ACTLSHIP], [inv_number] ASC
+*/
